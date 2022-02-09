@@ -1,0 +1,18 @@
+{% extends 'Yonseitennis/../base.html' %}
+{% block content %}
+    <div style="margin-top:50px; display: flex; justify-content: center;">
+        <div style="height: 500px; width: 837px;">
+            <div style="margin-left: 10px; padding-bottom: 30px; font-size: 30px">글쓰기</div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form.as_p }}
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <input type="submit" class="btn btn-dark btn-sm me-md-2" value="저장"/>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

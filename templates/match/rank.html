@@ -1,0 +1,109 @@
+{% extends 'Yonseitennis/../base.html' %}
+{% block content %}
+
+    <!-- toggle button -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/segment.css' %}">
+
+
+    <style>
+        .box {
+            width: 30px;
+            height: 30px;
+            border-radius: 70%;
+            overflow: hidden;
+            margin-right: 5px
+        }
+
+        .profile {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <div style="margin-top:50px; display: flex; justify-content: center;">
+        <div style="height: 500px; width: 900px;">
+            <span style="margin-left: 10px; padding-bottom: 30px; font-size: 30px">테니스 랭킹</span>
+                <table class="table table-hover">
+                <thead>
+                    <tr>
+                    <th style="text-align: center">순위</th>
+                    <th style="text-align: center">닉네임</th>
+                    <th style="text-align: center">포인트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if page_obj %}
+                        {% for player in page_obj %}
+                            <tr onclick="location.href='#'" style="cursor:pointer;">
+                                <td style="text-align: center">{{ player.rank }}</td>
+                                <td style="display:flex; justify-content: center; align-items: center">
+                                    <div class="box">
+                                        <img class="profile" src="{{ player.profile_image.url }}">
+                                    </div>
+                                    <div>{{ player.nickname }}</div>
+                                </td>
+                                <td style="text-align: center">{{ player.points }}</td>
+                            </tr>
+                        {% endfor %}
+                </tbody>
+                </table>
+                    {% else %}
+                        <tr></tr>
+                </tbody>
+                </table>
+            <div style="text-align: center">순위가 없습니다.</div>
+                    {% endif %}
+
+            {% if is_paginated %}
+            <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">이전</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link" href="#" tabindex="-1">이전</a>
+                </li>
+              {% endif %}
+              {% for page in page_range %}
+                    {% if page == page_obj.number %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                        </li>
+                    {% endif %}
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link" href="#">다음</a>
+                </li>
+              {% endif %}
+              </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="{% static 'js/segment.js' %}"></script>
+<script type="text/javascript">
+  jQuery(function ($){
+       $(".segment-select").Segment();
+  });
+</script>
+
+
+{% endblock %}
+
+

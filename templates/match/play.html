@@ -1,0 +1,333 @@
+{% extends 'Yonseitennis/../base.html' %}
+{% block content %}
+
+    <!-- toggle button -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/segment.css' %}">
+
+
+    <style>
+        .box {
+            width: 30px;
+            height: 30px;
+            border-radius: 70%;
+            overflow: hidden;
+            margin-right: 5px
+        }
+
+        .profile {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <div style="margin-top:50px; display: flex; justify-content: center;">
+        <div style="height: 500px; width: 800px;">
+            <div style="display: flex; align-items: center">
+                <span style="font-size: 30px; margin-right: 5px">경기 내용</span>
+                <form method="get" action="{% url 'match:play' %}">
+                <select id="filter" name="filter" size="1" onchange="clickSubmit()">
+                    <option value=1>전체</option>
+                    <option value=2>단식</option>
+                    <option value=3>복식</option>
+                    <option value=4>신청대기</option>
+                    <option value=5>진행중</option>
+                    <option value=6>종료</option>
+                </select>
+                    <input id="filter_submit" type="submit" style="display: none">
+                </form>
+            </div>
+            <div style="float: right; margin-top: -10px"><a><button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">경기시작</button></a></div>
+
+
+                <table class="table table-hover">
+                <thead>
+                    <tr>
+                    <th style="text-align: center">게임 설정</th>
+                    <th style="text-align: center">상대방</th>
+                    <th style="text-align: center">게임 상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if page_obj %}
+                        {% for match in page_obj %}
+                            <tr onclick="location.href='#'" style="cursor:pointer;">
+                                <td style="text-align: center; width: 200px; value:{{ match }}">
+                                    {{ match.is_double }}({{ match.sets }}세트/{{ match.games }}게임)
+                                </td>
+                                <td style="text-align: center">
+                                    {% if match.is_double == '복식' %}
+                                        {{ match.player1_1 }}, {{ match.player1_2 }}
+                                    {% else %}
+                                        {{ match.player1_1 }}
+                                    {% endif %}
+                                </td>
+                                <td style="text-align: center">
+                                    {% if match.status == '신청' %}
+                                        <div style="display: flex; justify-content: center">
+                                            {{ match.status }}
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                    style="padding: 0px 4px; margin-left: 7px" id="{{ match.pk }}" onclick="clickYes(this.id)">수락</button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                    style="padding: 0px 4px; margin-left: 2px" id="{{ match.pk }}" onclick="clickNo(this.id)">거절</button>
+
+                                        </div>
+                                    {% elif match.status == '진행중'%}
+                                        <div style="display: flex; justify-content: center">
+                                            {{ match.status }}
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                    style="padding: 0px 4px; margin-left: 2px" id="{{ match.pk }}" onclick="clickFinish(this.id)">결과</button>
+                                            <input type="hidden" id="player1_1_{{ match.pk }}" value="{{ match.player1_1 }}">
+                                            <input type="hidden" id="player1_2_{{ match.pk }}" value="{{ match.player1_2 }}">
+                                            <input type="hidden" id="player2_1_{{ match.pk }}" value="{{ match.player2_1 }}">
+                                            <input type="hidden" id="player2_2_{{ match.pk }}" value="{{ match.player2_2 }}">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop2" id="result" style="display: none"></button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                    style="padding: 0px 4px; margin-left: 2px" id="{{ match.pk }}" onclick="clickCancel(this.id)">취소</button>
+                                        </div>
+                                    {% elif match.status == '경기종료'%}
+                                        {% if request.user is match.player1_1 or request.user is match.player1_2 %}
+                                            {% if match.team1_score > match.team2_score %}
+                                                승리
+                                            {% else %}
+                                                패배
+                                            {% endif %}
+                                            ({{ match.team1_score }}:{{ match.team2_score }})
+                                        {% else %}
+                                            {% if match.team1_score > match.team2_score %}
+                                                패배
+                                            {% else %}
+                                                승리
+                                            {% endif %}
+                                            ({{ match.team2_score }}:{{ match.team1_score }})
+                                        {% endif %}
+                                    {% else %}
+                                        {{ match.status }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                </tbody>
+                </table>
+                        <form id="tableForm" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" id="reply" name="reply">
+                            <input type="submit" id="submit" style="display: none">
+                        </form>
+                    {% else %}
+                        <tr></tr>
+                </tbody>
+                </table>
+            <div style="text-align: center">경기가 없습니다.</div>
+                    {% endif %}
+
+
+            {% if is_paginated %}
+            <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">이전</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link" href="#" tabindex="-1">이전</a>
+                </li>
+              {% endif %}
+              {% for page in page_range %}
+                    {% if page == page_obj.number %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                        </li>
+                    {% endif %}
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link" href="#">다음</a>
+                </li>
+              {% endif %}
+              </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal  -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">경기 설정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div style="display: flex; justify-content: center; margin-bottom: 5px">
+                        <select name="is_double" form="myForm" id="SD" onchange="clickSD()">
+                            <option value="단식" selected>단식</option>
+                            <option value="복식">복식</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-bottom: 5px">
+                        <div style="margin-right: 4px">{{ request.user }}</div>
+                        <select class="double" style="display: none" name="player1_2" size="1" form="myForm">
+                            <option value='none' selected>----우리편----</option>
+                            {% for user in users %}
+                                <option value='{{ user }}'> {{ user }} </option>
+                            {% endfor %}
+                        </select>
+                        <span style="margin: 0px 4px">vs</span>
+                        <select name="player2_1" size="1" form="myForm">
+                            <option value='none' selected>----상대방----</option>
+                            {% for user in users %}
+                                <option value='{{ user }}'> {{ user }} </option>
+                            {% endfor %}
+                        </select>
+                        <select class="double" style="display: none" name="player2_2" size="1" form="myForm">
+                        <option value='none' selected>----상대방2----</option>
+                            {% for user in users %}
+                                <option value='{{ user }}'> {{ user }} </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; margin-bottom: 5px">
+                        <div style="margin-right: 4px">세트 수:</div>
+                        <select name="sets" size="1" form="myForm">
+                            <option value=1 selected>1 세트</option>
+                            <option value=2>2 세트</option>
+                            <option value=3>3 세트</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-bottom: 5px">
+                        <div style="margin-right: 4px">게임 수:</div>
+                        <select name="games" size="1" form="myForm">
+                            <option value=6 selected>6 게임</option>
+                            <option value=4>4 게임</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <form id="myForm" method="post" action={% url 'match:makematch' %}>
+                        {% csrf_token %}
+                        <input type="submit" id="myForm" class="btn btn-primary" value="경기시작">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+   <!-- Modal2  -->
+<div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">경기 결과</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+          <div style="display: flex; justify-content: center; margin-bottom: 5px">
+              <span id="player1_1"></span>
+              <span> vs </span>
+              <span id="player2_1"></span>
+          </div>
+          <div style="display: flex; justify-content: center; margin-bottom: 5px">
+              <input type="number" min="0" name="team_1" style="width: 40px" form="myForm2">
+              <input type="number" min="0" name="team_2" style="width: 40px" form="myForm2">
+          </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <form id="myForm2" method="post">
+            {% csrf_token %}
+            <input type="submit" id="myForm3" class="btn btn-primary" value="저장">
+        </form>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="{% static 'js/segment.js' %}"></script>
+<script type="text/javascript">
+  jQuery(function ($){
+       $(".segment-select").Segment();
+  });
+
+</script>
+<script>
+
+let filter = {{filter}};
+console.log(filter)
+$("#filter").val(filter).prop("selected", true);
+
+  function clickSubmit(){
+      document.querySelector('#filter_submit').click();
+  }
+
+    function clickSD(){
+        const SD = document.querySelector('#SD');
+        console.log(SD.options[SD.selectedIndex].value)
+        if (SD.options[SD.selectedIndex].value == '복식'){
+            let double = document.querySelectorAll('.double');
+            for (let i=0; i<double.length; i++) {
+                double[i].style.display = 'block';
+            }
+        }
+        else {
+            let double = document.querySelectorAll('.double');
+            for (let i=0; i<double.length; i++) {
+                double[i].style.display = 'none';
+            }
+        }
+
+
+  }
+
+  function clickYes(match_pk){
+      document.querySelector('#reply').setAttribute('value', 'yes');
+      document.querySelector('#tableForm').setAttribute('action', '/match/play/'+match_pk)
+      document.querySelector('#submit').click();
+  }
+  function clickNo(match_pk){
+      document.querySelector('#reply').setAttribute('value', 'no');
+      document.querySelector('#tableForm').setAttribute('action', '/match/play/'+match_pk)
+      document.querySelector('#submit').click();
+  }
+  function clickFinish(match_pk){
+      document.querySelector('#myForm2').setAttribute('action', '/match/play/score/'+match_pk)
+      const player1_1 = document.querySelector('#player1_1_'+match_pk).value;
+      document.querySelector('#player1_1').innerHTML = player1_1;
+      const player2_1 = document.querySelector('#player2_1_'+match_pk).value;
+      document.querySelector('#player2_1').innerHTML = player2_1;
+      document.querySelector('#result').click();
+  }
+  function clickCancel(match_pk){
+      document.querySelector('#reply').setAttribute('value', 'cancel');
+      document.querySelector('#tableForm').setAttribute('action', '/match/play/'+match_pk)
+      document.querySelector('#submit').click();
+  }
+</script>
+
+{% endblock %}
+
+
+}
