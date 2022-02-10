@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <!-- Required meta tags -->
+    {% load static %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -86,9 +87,9 @@
         <div>
                 <span>
                     <a href="https://www.instagram.com/yonseitennis/"><img
-                            style="width: 30px; padding-top: 7px; margin-left: 200px;" src="/static/img/instagram2.png"></a>
+                            style="width: 30px; padding-top: 7px; margin-left: 200px;" src={% static 'img/instagram2.png' %}></a>
                     <a href="#"><img style="width: 30px; padding-top: 7px; margin-left: 5px;"
-                                     src="/static/img/youtube.png"></a>
+                                     src={% static 'img/youtube.png' %}></a>
                 </span>
 
             {% if not request.user.is_authenticated %}
