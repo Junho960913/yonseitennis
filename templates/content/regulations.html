@@ -1,21 +1,22 @@
 {% extends 'Yonseitennis/../base.html' %}
 {% block content %}
+    {% load static %}
     <div style="display: flex; justify-content: center">
                 <div style="min-width: 1400px; width: calc(100vw - 500px)">
                     <div class="slider" style="min-width: 1400px;">
                         <div style="height: calc(100vh - 250px); display: flex; justify-content: center; align-items: center"><img
-                                style="height:calc(100vh - 250px)" src="../static/img/page1.jpg"></div>
+                                style="height:calc(100vh - 250px)" src="{% static '/img/page1.jpg' %}"></div>
                         <div style="height: calc(100vh - 250px); display: flex; justify-content: center; align-items: center">
-                            <img style="height:calc(100vh - 250px)" src="../static/img/page20.jpg">
-                            <img style="height:calc(100vh - 250px)" src="../static/img/page30.jpg">
+                            <img style="height:calc(100vh - 250px)" src="{% static '/img/page2.jpg' %}">
+                            <img style="height:calc(100vh - 250px)" src="{% static '/img/page3.jpg' %}">
                         </div>
                         <div style="height: calc(100vh - 250px); display: flex; justify-content: center; align-items: center">
-                            <img style="height: calc(100vh - 250px)" src="../static/img/page40.jpg">
-                            <img style="height:calc(100vh - 250px)" src="../static/img/page50.jpg">
+                            <img style="height: calc(100vh - 250px)" src="{% static '/img/page4.jpg' %}">
+                            <img style="height:calc(100vh - 250px)" src="{% static '/img/page5.jpg' %}">
                         </div>
                         <div style="height: calc(100vh - 250px); display: flex; justify-content: center; align-items: center">
-                            <img style="height:calc(100vh - 250px)" src="../static/img/page60.jpg">
-                            <img style="height:calc(100vh - 250px)" src="../static/img/page70.jpg">
+                            <img style="height:calc(100vh - 250px)" src="{% static '/img/page6.jpg' %}">
+                            <img style="height:calc(100vh - 250px)" src="{% static '/img/page7.jpg' %}">
                         </div>
                     </div>
                 </div>
