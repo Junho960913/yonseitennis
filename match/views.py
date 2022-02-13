@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from django.views.generic import ListView, DetailView
 from user.models import User
 from .models import Match, Notification
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 class Rank(ListView):
 
@@ -59,8 +60,10 @@ class Rank(ListView):
         return context
 
 
-class Play(ListView):
 
+
+class Play(LoginRequiredMixin, ListView):
+    login_url = '/user/login'
     template_name = 'match/play.html'
     context_object_name = 'match'
     paginate_by = 10
@@ -70,6 +73,8 @@ class Play(ListView):
 
         if filtered == '2':
             filtered_match = Match.objects.filter(
+                Q(player1_1=self.request.user) |
+                Q(player1_1=self.request.user) |
                 Q(player2_1=self.request.user) |
                 Q(player2_2=self.request.user),
                 is_double='단식'
@@ -77,6 +82,8 @@ class Play(ListView):
 
         elif filtered == '3':
             filtered_match = Match.objects.filter(
+                Q(player1_1=self.request.user) |
+                Q(player1_1=self.request.user) |
                 Q(player2_1=self.request.user) |
                 Q(player2_2=self.request.user),
                 is_double='복식'
@@ -84,6 +91,8 @@ class Play(ListView):
 
         elif filtered == '4':
             filtered_match = Match.objects.filter(
+                Q(player1_1=self.request.user) |
+                Q(player1_1=self.request.user) |
                 Q(player2_1=self.request.user) |
                 Q(player2_2=self.request.user),
                 status='신청'
@@ -91,6 +100,8 @@ class Play(ListView):
 
         elif filtered == '5':
             filtered_match = Match.objects.filter(
+                Q(player1_1=self.request.user) |
+                Q(player1_1=self.request.user) |
                 Q(player2_1=self.request.user) |
                 Q(player2_2=self.request.user),
                 status='진행중'
@@ -98,6 +109,8 @@ class Play(ListView):
 
         elif filtered == '6':
             filtered_match = Match.objects.filter(
+                Q(player1_1=self.request.user) |
+                Q(player1_1=self.request.user) |
                 Q(player2_1=self.request.user) |
                 Q(player2_2=self.request.user),
                 status='경기종료'
@@ -105,12 +118,11 @@ class Play(ListView):
 
         else:
             filtered_match = Match.objects.filter(
+                Q(player1_1=self.request.user) |
+                Q(player1_1=self.request.user) |
                 Q(player2_1=self.request.user) |
                 Q(player2_2=self.request.user),
             ).order_by('-pk')
-
-        print(filtered)
-        print(len(filtered_match))
 
         return filtered_match
 
@@ -205,39 +217,44 @@ class Score(APIView):
         team2_score = request.POST.get('team_2')
         match.team1_score = team1_score
         match.team2_score = team2_score
-        match.status = '경기종료'
-        match.save()
 
-        if match.is_double == '단식':
-            player1_1 = User.objects.get(nickname=match.player1_1)
-            player2_1 = User.objects.get(nickname=match.player2_1)
+        if match.status != '경기종료':
+            match.status = '경기종료'
+            match.save()
 
-            if team1_score > team2_score:
-                player1_1.points += 100
+            if match.is_double == '단식':
+                player1_1 = User.objects.get(nickname=match.player1_1)
+                player2_1 = User.objects.get(nickname=match.player2_1)
+
+                if team1_score > team2_score:
+                    player1_1.points += 100
+
+                else:
+                    player2_1.points += 100
+
+                player1_1.save()
+                player2_1.save()
 
             else:
-                player2_1.points += 100
+                player1_1 = User.objects.get(nickname=match.player1_1)
+                player1_2 = User.objects.get(nickname=match.player1_2)
+                player2_1 = User.objects.get(nickname=match.player2_1)
+                player2_2 = User.objects.get(nickname=match.player2_2)
 
-            player1_1.save()
-            player2_1.save()
+                if team1_score > team2_score:
+                    player1_1.points += 100
+                    player1_2.points += 100
 
+                else:
+                    player2_1.points += 100
+                    player2_2.points += 100
+
+                player1_1.save()
+                player1_2.save()
+                player2_1.save()
+                player2_2.save()
         else:
-            player1_1 = User.objects.get(nickname=match.player1_1)
-            player1_2 = User.objects.get(nickname=match.player1_2)
-            player2_1 = User.objects.get(nickname=match.player2_1)
-            player2_2 = User.objects.get(nickname=match.player2_2)
-
-            if team1_score > team2_score:
-                player1_1.points += 100
-                player1_2.points += 100
-
-            else:
-                player2_1.points += 100
-                player2_2.points += 100
-
-            player1_1.save()
-            player1_2.save()
-            player2_1.save()
-            player2_2.save()
+            messages.add_message(self.request, messages.ERROR, '이미 종료된 게임입니다.')
 
         return redirect('/match/play')
+

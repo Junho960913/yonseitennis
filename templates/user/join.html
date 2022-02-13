@@ -14,7 +14,16 @@
       <title>연세 테니스부 회원가입</title>
   </head>
   <body style="background: #FAFAFA">
+
+
     <div style="width:100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center">
+    {% for message in messages %}
+        <div class="text-center" id="alert">
+            <div class="btn btn-{{ message.tags }} rounded-pill px-5 my-3">
+                {{ message }}
+            </div>
+        </div>
+    {% endfor %}
         <div style="text-align: center; padding: 20px; border: solid 1px rgba(219,219,219,1); width:400px; height: 480px; background: white">
             <div style="margin-bottom: 10px"><a href="/"><img style="width:100px" src="../static/img/yonseitennis.jpg"></a></div>
             <div style="margin-bottom: 10px">연세대학교 테니스 부원을 위한 사이트 입니다.</div>
@@ -49,7 +58,13 @@
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
-
+<script>
+    window.setTimeout(function () {
+        $("#alert").fadeTo(500, 0).slideUp(500, function () {
+            $(this).remove();
+        });
+    }, 4000);
+</script>
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 

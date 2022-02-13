@@ -7,24 +7,50 @@
 
 
     <style>
-        .box {
-            width: 30px;
-            height: 30px;
-            border-radius: 70%;
-            overflow: hidden;
-            margin-right: 5px
+        .play_container {
+            margin-top:50px;
+            display: flex;
+            justify-content: center;
         }
 
-        .profile {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .play_title {
+            display: flex;
+            align-items: center;
+        }
+
+        .play {
+            height: 500px;
+            width: 800px;
+        }
+
+        .play_button {
+            float: right;
+        }
+
+        @media screen and (max-width: 1400px) {
+            .play_container {
+                margin-top: 0px;
+            }
+
+            .play_title {
+                justify-content: center;
+            }
+
+            .play{
+                width: 90vw;
+            }
         }
     </style>
-
-    <div style="margin-top:50px; display: flex; justify-content: center;">
-        <div style="height: 500px; width: 800px;">
-            <div style="display: flex; align-items: center">
+    {% for message in messages %}
+        <div class="text-center" id="alert">
+            <div class="btn btn-{{ message.tags }} rounded-pill px-5 my-3">
+                {{ message }}
+            </div>
+        </div>
+    {% endfor %}
+    <div class="play_container">
+        <div class="play">
+            <div class="play_title">
                 <span style="font-size: 30px; margin-right: 5px">경기 내용</span>
                 <form method="get" action="{% url 'match:play' %}">
                 <select id="filter" name="filter" size="1" onchange="clickSubmit()">
@@ -38,7 +64,7 @@
                     <input id="filter_submit" type="submit" style="display: none">
                 </form>
             </div>
-            <div style="float: right; margin-top: -10px"><a><button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">경기시작</button></a></div>
+            <div class="play_button"><a><button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">경기시작</button></a></div>
 
 
                 <table class="table table-hover">
@@ -58,20 +84,31 @@
                                 </td>
                                 <td style="text-align: center">
                                     {% if match.is_double == '복식' %}
-                                        {{ match.player1_1 }}, {{ match.player1_2 }}
+                                        {% if request.user == match.player1_1 or request.user == match.player1_2 %}
+                                            {{ match.player2_1 }}, {{ match.player2_2 }}
+                                        {% else %}
+                                            {{ match.player1_1 }}, {{ match.player1_2 }}
+                                        {% endif %}
                                     {% else %}
-                                        {{ match.player1_1 }}
+                                        {% if request.user == match.player1_1 %}
+                                            {{ match.player2_1 }}
+                                        {% else %}
+                                            {{ match.player1_1 }}
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                                 <td style="text-align: center">
                                     {% if match.status == '신청' %}
                                         <div style="display: flex; justify-content: center">
                                             {{ match.status }}
-                                            <button type="button" class="btn btn-outline-primary btn-sm"
-                                                    style="padding: 0px 4px; margin-left: 7px" id="{{ match.pk }}" onclick="clickYes(this.id)">수락</button>
-                                            <button type="button" class="btn btn-outline-primary btn-sm"
-                                                    style="padding: 0px 4px; margin-left: 2px" id="{{ match.pk }}" onclick="clickNo(this.id)">거절</button>
-
+                                            {% if request.user == match.player2_1 or request.user == match.player2_2 %}
+                                                <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        style="padding: 0px 4px; margin-left: 7px" id="{{ match.pk }}" onclick="clickYes(this.id)">수락</button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        style="padding: 0px 4px; margin-left: 2px" id="{{ match.pk }}" onclick="clickNo(this.id)">거절</button>
+                                            {% else %}
+                                                대기중
+                                            {% endif %}
                                         </div>
                                     {% elif match.status == '진행중'%}
                                         <div style="display: flex; justify-content: center">
@@ -87,7 +124,7 @@
                                                     style="padding: 0px 4px; margin-left: 2px" id="{{ match.pk }}" onclick="clickCancel(this.id)">취소</button>
                                         </div>
                                     {% elif match.status == '경기종료'%}
-                                        {% if request.user is match.player1_1 or request.user is match.player1_2 %}
+                                        {% if request.user == match.player1_1 or request.user == match.player1_2 %}
                                             {% if match.team1_score > match.team2_score %}
                                                 승리
                                             {% else %}
@@ -274,6 +311,13 @@
 
 </script>
 <script>
+
+window.setTimeout(function () {
+    $("#alert").fadeTo(500, 0).slideUp(500, function () {
+        $(this).remove();
+    });
+}, 4000);
+
 
 let filter = {{filter}};
 console.log(filter)

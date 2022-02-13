@@ -1,11 +1,12 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import User
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 from django.contrib import auth
+from django.db import IntegrityError
 
 class Join(APIView):
     def get(self, request):
@@ -13,17 +14,27 @@ class Join(APIView):
 
     def post(self, request):
         if request.POST['password1'] == request.POST['password2']:
-            User.objects.create(
-                email=request.POST['email'],
-                nickname=request.POST['nickname'],
-                name=request.POST['name'],
-                password=make_password(request.POST['password1']),
-                profile_image='../static/img/default_profile.png',
-                points=0
-            )
-            return render(request, 'user/login.html', context=dict(message='회원가입이 완료되었습니다.'))
+            try:
+                User.objects.create(
+                    email=request.POST['email'],
+                    nickname=request.POST['nickname'],
+                    name=request.POST['name'],
+                    password=make_password(request.POST['password1']),
+                    profile_image='../static/img/default_profile.png',
+                    points=0
+                )
+                messages.add_message(self.request, messages.SUCCESS, '회원가입이 완료되었습니다.')
+                return render(request, 'user/login.html')
+            except IntegrityError as e:
+                print(e)
+                if str(e) == 'UNIQUE constraint failed: User.nickname':
+                    messages.add_message(self.request, messages.ERROR, '이미 존재하는 닉네임입니다.')
+                elif str(e) == 'UNIQUE constraint failed: User.email':
+                    messages.add_message(self.request, messages.ERROR, '이미 존재하는 이메일입니다.')
+                return render(request, 'user/join.html')
 
-        return render(request, 'user/join.html', context=dict(message='회원가입에 실패하셨습니다.'))
+        messages.add_message(self.request, messages.ERROR, '비밀번호가 다릅니다.')
+        return render(request, 'user/join.html')
 
 class Login(APIView):
     def get(self, request):

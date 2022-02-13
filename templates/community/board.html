@@ -1,8 +1,38 @@
 {% extends 'Yonseitennis/../base.html' %}
 {% block content %}
-    <div style="margin-top:50px; display: flex; justify-content: center;">
-        <div style="height: 500px; width: 1300px;">
-            <div style="margin-left: 10px; padding-bottom: 30px; font-size: 30px">공지사항</div>
+    <style>
+        .board_container{
+            margin-top:50px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .board{
+            height: 500px;
+            width: 1300px;
+        }
+
+        .write_button{
+            float: right;
+        }
+
+        @media screen and (max-width: 1400px) {
+            .board_container {
+                margin-top: 0px;
+            }
+
+            .board{
+                text-align: center;
+                width: 90vw;
+            }
+        }
+    </style>
+    <div class="board_container">
+        <div class="board">
+            <div style="font-size: 30px">공지사항</div>
+            <div class="write_button">
+                <a href="board_write"><button type="button" class="btn btn-outline-secondary btn-sm me-md-2">글쓰기</button></a>
+            </div>
             <table class="table table-hover">
                 <thead class="thead-dark">
                     <tr>
@@ -18,7 +48,7 @@
                         {% for content in page_obj %}
                             <tr onclick="location.href='/community/board_detail/{{ content.id }}'" style="cursor:pointer;">
                                 <td style="text-align: center">{{ content.id }}</td>
-                                <td style="text-align: center">{{ content.제목|truncatechars:40 }}</td>
+                                <td id="table_title" style="text-align: center">{{ content.제목|truncatechars:5 }}</td>
                                 <td style="text-align: center">{{ content.author }}</td>
                                 <td style="text-align: center">{{ content.date }}</td>
                                 <td style="text-align: center">{{ content.hits }}</td>
@@ -32,9 +62,7 @@
                 </table>
             <div style="text-align: center">작성된 게시물이 없습니다.</div>
                     {% endif %}
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a href="board_write"><button type="button" class="btn btn-outline-secondary btn-sm me-md-2">글쓰기</button></a>
-            </div>
+
             {% if is_paginated %}
             <nav aria-label="Page navigation example">
               <ul class="pagination justify-content-center">

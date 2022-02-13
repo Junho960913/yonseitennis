@@ -17,65 +17,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
 
+
+{#    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sidebars/">#}
+
+    {% load static %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/sidebars.css" rel="stylesheet">
+
     <!-- My CSS -->
-{#    {% load static %}#}
-{#    <link rel="stylesheet" type="text/css" href="/static/css/base.css">#}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 
-    <style>
-         .nav_bar{
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-                flex-wrap: nowrap;
-                min-width: 1400px;
-                width:100%;
-                padding: 20px;
-            }
-
-        .menu_bar{
-            padding-top: 15px;
-            list-style: none;
-            font-size: 20px;
-        }
-
-        .menu_bar_link{
-            text-decoration: none;
-            color: black;
-        }
-        .box {
-            width: 30px;
-            height: 30px;
-            border-radius: 70%;
-            overflow: hidden;
-        }
-
-        .profile {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        html, body {
-            height: 100%;
-            min-width: 1400px;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content {
-            flex: 1 0 auto;
-        }
-
-        footer {
-            background: rgb(77,77,77);
-            flex-shrink: 0;
-            z-index: 99;
-        }
-
-    </style>
 
     <title>Yonsei Tennis</title>
 </head>
@@ -83,17 +36,18 @@
 {% load custom_tags %}
 
 <div class="content">
-    <div style="width:100%; height:45px; background: #003875">
+
+    <div class="header">
         <div>
-                <span>
-                    <a href="https://www.instagram.com/yonseitennis/"><img
-                            style="width: 30px; padding-top: 7px; margin-left: 200px;" src='/static/img/instagram.png'></a>
-                    <a href="#"><img style="width: 30px; padding-top: 7px; margin-left: 5px;"
-                                     src={% static 'img/youtube.png' %}></a>
-                </span>
+            <span>
+                <a href="https://www.instagram.com/yonseitennis/"><img
+                        style="width: 30px; padding-top: 7px; margin-left: 8%;" src={% static 'img/instagram2.png' %}></a>
+                <a href="#"><img style="width: 30px; padding-top: 7px; margin-left: 5px;"
+                                 src={% static 'img/youtube.png' %}></a>
+            </span>
 
             {% if not request.user.is_authenticated %}
-                <div style="float: right; margin-right: 100px; padding-top: 5px">
+                <div style="float: right; margin-right: 10%; padding-top: 5px">
                     <div style="display: flex; flex-direction: row">
                         <a href="/user/join"
                            style="margin-top:8px; display: flex; flex-direction: row; margin-right: 10px; text-decoration: none; color: black">
@@ -111,7 +65,7 @@
                 </div>
 
             {% else %}
-                <div style="float: right; margin-right: 100px">
+                <div style="float: right; margin-right: 10%">
                     <div class="dropdown">
                         <a id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" href="#"
                            style="margin-top:8px; text-decoration: none; color: black; display: flex; align-items: center">
@@ -135,16 +89,16 @@
             {% endif %}
         </div>
     </div>
-    <div class="nav_bar" style="min-width: 1125px">
-        <a href="/" style="display: flex; flex-direction: row; align-items: center">
+    <div class="nav_bar">
+        <a href="/" style="display: flex; flex-direction: row; align-items: center;">
             <img style="width:45px; margin-right: 5px" src="/static/img/yonseitennis.jpg">
-            <img style="width:180px" src="/static/img/yonseitennis_name.png">
+            <img style="width:180px" src="{% static 'img/yonseitennis_name.png' %}">
         </a>
-        <ul style="width: 700px; display: flex; flex-direction: row; justify-content: space-between;">
+        <ul class="menu_bar">
             <div class="dropdown">
                 <a id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" href="#"
                    style="text-decoration: none; color: black; display: flex; align-items: center">
-                    <li class="menu_bar">동아리 소개</li>
+                    <li class="menu_inside_bar">동아리 소개</li>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <li style="text-align: center"><a class="dropdown-item" href="/content/introduce">소 개</a></li>
@@ -157,7 +111,7 @@
             <div class="dropdown">
                 <a id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" href="#"
                    style="text-decoration: none; color: black; display: flex; align-items: center">
-                    <li class="menu_bar">커뮤니티</li>
+                    <li class="menu_inside_bar">커뮤니티</li>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <li style="text-align: center"><a class="dropdown-item" href="/community/board">공지사항</a></li>
@@ -170,7 +124,7 @@
             <div class="dropdown">
                 <a id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" href="#"
                    style="text-decoration: none; color: black; display: flex; align-items: center">
-                    <li class="menu_bar">경기 만들기</li>
+                    <li class="menu_inside_bar">경기 만들기</li>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <li style="text-align: center"><a class="dropdown-item" href="/match/play">나의 경기</a></li>
@@ -180,10 +134,79 @@
                     <li style="text-align: center"><a class="dropdown-item" href="/match/rank">테니스 랭킹</a></li>
                 </ul>
             </div>
-            <li class="menu_bar"><a class="menu_bar_link" href="#">부원 모집</a></li>
+            <li class="menu_inside_bar"><a class="menu_bar_link" href="#">부원 모집</a></li>
         </ul>
-        <div style="width:200px"></div>
+        <div style="width:200px;"></div>
+
+        <div class="material-icons-outlined" id="nav_bar_toggle">menu</div>
     </div>
+
+
+    <div id="side_bar" class="flex-shrink-0 p-3 bg-white">
+    <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+      <span class="fs-5 fw-semibold">메뉴</span>
+    </a>
+    <ul class="list-unstyled ps-0">
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
+          동아리 소개
+        </button>
+        <div class="collapse" id="home-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="/content/introduce" class="link-dark rounded">소개</a></li>
+            <li><a href="/content/regulations" class="link-dark rounded">회칙</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+          커뮤니티
+        </button>
+        <div class="collapse" id="dashboard-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="/community/board" class="link-dark rounded">공지사항</a></li>
+            <li><a href="/community/freetalk" class="link-dark rounded">자유게시판</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+          경기 만들기
+        </button>
+        <div class="collapse" id="orders-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="/match/play" class="link-dark rounded">나의 경기</a></li>
+            <li><a href="/match/rank" class="link-dark rounded">테니스 랭킹</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse2" aria-expanded="false">
+          부원 모집
+        </button>
+        <div class="collapse" id="orders-collapse2">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="#" class="link-dark rounded">나의 경기</a></li>
+            <li><a href="#" class="link-dark rounded">테니스 랭킹</a></li>
+          </ul>
+        </div>
+      </li>
+{#      <li class="border-top my-3"></li>#}
+{#      <li class="mb-1">#}
+{#        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">#}
+{#          Account#}
+{#        </button>#}
+{#        <div class="collapse" id="account-collapse">#}
+{#          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">#}
+{#            <li><a href="#" class="link-dark rounded">New...</a></li>#}
+{#            <li><a href="#" class="link-dark rounded">Profile</a></li>#}
+{#            <li><a href="#" class="link-dark rounded">Settings</a></li>#}
+{#            <li><a href="#" class="link-dark rounded">Sign out</a></li>#}
+{#          </ul>#}
+{#        </div>#}
+{#      </li>#}
+    </ul>
+  </div>
     {% block content %}
 
     {% endblock %}
@@ -191,9 +214,7 @@
 
 <footer>
     <div style="text-align: center; font-size: 13px; color: rgb(178,178,178)">서울특별시 서대문구 연세로 50 연세대학교</div>
-    <div style="text-align: center; font-size: 13px; color: rgb(178,178,178)">COPYRIGHT© 2022 YONSEI UNIV. TENNIS ALL
-        RIGHTS RESERVED.
-    </div>
+    <div style="text-align: center; font-size: 13px; color: rgb(178,178,178)">COPYRIGHT© 2022 YONSEI UNIV. TENNIS ALL RIGHTS RESERVED.</div>
 </footer>
 
 
@@ -205,10 +226,38 @@
         });
     });
 </script>
+
+<script>
+
+    function myFunction(x) {
+      if (x.matches) { // If media query matches
+        document.querySelector('#side_bar').style.display = 'none';
+      }
+    }
+
+    var x = window.matchMedia("(min-width: 1400px)")
+    myFunction(x) // Call listener function at run time
+    x.addListener(myFunction) // Attach listener function on state changes
+
+    document.querySelector('#nav_bar_toggle').onclick = function(){
+
+        if (document.querySelector('#side_bar').style.display == 'block'){
+            document.querySelector('#side_bar').style.display = 'none';
+        }
+        else{
+            document.querySelector('#side_bar').style.display = 'block';
+        }
+
+    }
+
+</script>
 <!-- Option 1: Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
+
+
+<script src="/static/js/sidebars.js"></script>
 
 <!-- Option 2: Separate Popper and Bootstrap JS -->
 <!--

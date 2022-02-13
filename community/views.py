@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from rest_framework.views import APIView
-from django.views.generic import ListView, DetailView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView
 from user.models import User
 from .models import Contents
 from .forms import Writing_contents
@@ -43,14 +43,12 @@ class Board(APIView, ListView):
         return context
 
 
-
-class Board_write(LoginRequiredMixin, APIView):
+class Board_write(LoginRequiredMixin, CreateView):
     login_url = '/user/login'
     def get(self, request):
         form = Writing_contents()
         return render(request, 'community/board_write.html', context=dict(form=form))
 
-    # @login_required(login_url='common:login')
     def post(self, request):
         form = Writing_contents(request.POST)
         if form.is_valid():
