@@ -48,6 +48,7 @@ class Login(APIView):
             auth.login(request, user)
             return redirect('/')
         else:
+            messages.add_message(self.request, messages.ERROR, '로그인 정보가 잘못되었습니다.')
             return render(request, 'user/login.html')
 
 
