@@ -1,0 +1,37 @@
+{% extends 'Yonseitennis/../base.html' %}
+{% block content %}
+
+<div style="display: flex; justify-content: center; align-items: center">
+    <div style="display: flex; flex-direction: column; align-items: center; margin-right: 10px">
+        <div class="box" style="width: 150px; height: 150px;">
+            <img class="profile" src="{{ request.user.profile_image.url }}">
+        </div>
+        <button type="button" id="change_button" class="btn btn-secondary btn-sm" style="width: 50%">사진 변경</button>
+        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="change_profile" name="profile_image" style="display: none">
+            <input type="submit" id="submit_change" style="display: none">
+        </form>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ user_change_form }}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <input type="submit" class="btn btn-dark btn-sm me-md-2" value="저장"/>
+        </div>
+    </form>
+</div>
+
+
+
+<script>
+    document.querySelector('#change_button').onclick = function () {
+        document.querySelector('#change_profile').click();
+    }
+    document.querySelector('#change_profile').onchange = function () {
+        document.querySelector('#submit_change').click();
+    }
+</script>
+
+{% endblock %}

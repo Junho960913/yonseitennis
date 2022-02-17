@@ -60,7 +60,6 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=24)
     nickname = models.CharField(max_length=24, unique=True)
     profile_image = models.ImageField(null=True, upload_to="uploads/%Y/%m/%d", blank=True)
-    # profile_image = models.TextField()
     points = models.IntegerField(default=0)
     rank = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)

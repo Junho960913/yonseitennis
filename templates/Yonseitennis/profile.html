@@ -1,22 +1,36 @@
 {% extends 'Yonseitennis/../base.html' %}
 {% block content %}
 
+{% for message in messages %}
+    <div class="text-center" id="alert">
+        <div class="btn btn-{{ message.tags }} rounded-pill px-5 my-3">
+            {{ message }}
+        </div>
+    </div>
+{% endfor %}
+
 <div style="display: flex; justify-content: center; align-items: center">
     <div style="display: flex; flex-direction: column; align-items: center; margin-right: 10px">
         <div class="box" style="width: 150px; height: 150px;">
             <img class="profile" src="{{ request.user.profile_image.url }}">
         </div>
-        <button type="button" id="change_button" class="btn btn-secondary btn-sm" style="width: 50%">사진 변경</button>
-        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            <input type="file" id="change_profile" name="profile_image" style="display: none">
-            <input type="submit" id="submit_change" style="display: none">
-        </form>
-
+{#        <button type="button" id="change_button" class="btn btn-secondary btn-sm" style="width: 50%">사진 변경</button>#}
+{#        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">#}
+{#            {% csrf_token %}#}
+{#            <input type="file" id="change_profile" name="profile_image" style="display: none">#}
+{#            <input type="submit" id="submit_change" style="display: none">#}
+{#        </form>#}
     </div>
 
-    <div style="font-size: 30px  ">{{ request.user }}</div>
+
+
+    <div style="font-size: 30px; margin-right: 5px">{{ request.user }}</div>
+    <a href="update"><button type="button" class="btn btn-secondary btn-sm">프로필 변경</button></a>
+{#    <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">#}
+{#        {% csrf_token %}#}
+{#        <input type="file" id="change_profile" name="profile_image" style="display: none">#}
+{#        <input type="submit" id="submit_change" style="display: none">#}
+{#    </form>#}
 
 </div>
 
@@ -27,6 +41,14 @@
     document.querySelector('#change_profile').onchange = function () {
         document.querySelector('#submit_change').click();
     }
+</script>
+
+<script>
+window.setTimeout(function () {
+    $("#alert").fadeTo(500, 0).slideUp(500, function () {
+        $(this).remove();
+    });
+}, 4000);
 </script>
 
 {% endblock %}

@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
 
-from .views import Sub, Profile, NotificationDetail
+from .views import Sub, Profile, ProfileUpdate, NotificationDetail
+
+app_name = 'Yonseitennis'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Sub.as_view()),
     path('profile/', Profile.as_view(), name='profile'),
+    path('profile/update/', ProfileUpdate.as_view(), name='profile_update'),
     path('notification/<int:notification_pk>/match/<int:match_pk>',
          NotificationDetail.as_view(), name='notification-detail'),
     path('user/', include('user.urls')),
